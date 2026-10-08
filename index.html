@@ -803,6 +803,69 @@ textarea.input,
   height: 1.5rem;
 }
 
+/* Data e clima: datas e números do prazo */
+.dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.dates .field--wide {
+  grid-column: 1 / -1;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0 0.5rem;
+  padding: 0.875rem 0;
+  border-block: 1px solid var(--line);
+}
+
+.kpi dt {
+  min-height: 2.5em;
+  color: var(--muted);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.kpi dd {
+  margin-top: 0.25rem;
+  font-size: clamp(1.125rem, 5vw, 1.375rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+
+.kpi dd.is-late {
+  color: var(--alert);
+  font-size: 1.0625rem;
+}
+
+.kpi .deadline__bar {
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 40rem) {
+  .dates {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .dates .field--wide {
+    grid-column: auto;
+  }
+
+  .kpi dt {
+    min-height: 0;
+  }
+}
+
 .condition {
   margin-top: 0.875rem;
   padding: 0.75rem 0.875rem;
@@ -1765,7 +1828,7 @@ textarea.input,
 /* Quadro de informações */
 .pd-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   margin-top: 4mm;
   border: 0.75pt solid var(--pd-line);
   border-radius: 2mm;
@@ -1778,11 +1841,11 @@ textarea.input,
   border-bottom: 0.75pt solid var(--pd-line);
 }
 
-.pd-cell:nth-child(4n) {
+.pd-cell:nth-child(3n) {
   border-right: 0;
 }
 
-.pd-cell:nth-last-child(-n + 4) {
+.pd-cell:nth-last-child(-n + 3) {
   border-bottom: 0;
 }
 
@@ -2111,6 +2174,64 @@ textarea.input,
   font-size: 0.9375rem;
 }
 
+/* ==========================================================================
+   Datas e horas no iPhone/Android: o Safari do iPhone dá uma largura
+   mínima própria a esses campos e eles "vazam" para fora do quadro.
+   Aqui eles passam a seguir a largura da coluna e ficam todos iguais.
+   ========================================================================== */
+
+input[type='date'],
+input[type='time'] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.input[type='date'],
+.input[type='time'] {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 48px;
+  min-height: 48px;
+  line-height: 1.2;
+  text-align: left;
+}
+
+input[type='date']::-webkit-date-and-time-value,
+input[type='time']::-webkit-date-and-time-value {
+  min-height: 1.2em;
+  margin: 0;
+  text-align: left;
+}
+
+input[type='date']::-webkit-datetime-edit,
+input[type='time']::-webkit-datetime-edit {
+  padding: 0;
+}
+
+.field,
+.dates > *,
+.duo > * {
+  min-width: 0;
+}
+
+.duo,
+.dates {
+  width: 100%;
+}
+
+.date-chip {
+  max-width: 100%;
+}
+
+.date-chip input {
+  min-width: 0;
+  width: 9.5rem;
+  max-width: 100%;
+}
+
 </style>
     <meta name="theme-color" content="#174987" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -2154,10 +2275,6 @@ textarea.input,
                 <span>RDO nº</span>
                 <input class="pill-field__input" type="number" min="1" name="numero" inputmode="numeric" placeholder="—" />
               </label>
-              <label class="pill-field pill-field--date">
-                <span>Data</span>
-                <input class="pill-field__input" type="date" name="data" />
-              </label>
             </div>
           </div>
           <p class="eyebrow">Relatório diário de obra · <span id="dia-semana">—</span></p>
@@ -2183,46 +2300,58 @@ textarea.input,
           <details class="step" data-step="clima">
             <summary class="step__head">
               <span class="step__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg></span>
-              <span class="step__title">Clima e prazo</span>
+              <span class="step__title">Data e clima</span>
               <span class="step__badge" data-badge="clima"></span>
             </summary>
             <div class="step__body">
-              <p class="label">Manhã</p>
+              <div class="dates">
+                <label class="field field--wide">
+                  <span class="label">Data do relatório</span>
+                  <input class="input" type="date" name="data" />
+                </label>
+                <label class="field">
+                  <span class="label">Início da obra</span>
+                  <input class="input" type="date" name="inicio" />
+                </label>
+                <label class="field">
+                  <span class="label">Prazo previsto de entrega</span>
+                  <input class="input" type="date" name="entrega" />
+                </label>
+              </div>
+
+              <dl class="kpis">
+                <div class="kpi">
+                  <dt>Dias corridos</dt>
+                  <dd id="dias-corridos">—</dd>
+                </div>
+                <div class="kpi">
+                  <dt>Dias para a entrega</dt>
+                  <dd id="dias-restantes">—</dd>
+                </div>
+                <div class="kpi">
+                  <dt>Prazo decorrido</dt>
+                  <dd id="prazo-pct">—</dd>
+                  <div class="deadline__bar" aria-hidden="true"><span id="prazo-bar"></span></div>
+                </div>
+              </dl>
+
+              <p class="label">Clima — manhã</p>
               <input type="hidden" name="climaManha" />
               <div class="chips chips--weather" data-field="climaManha"></div>
-              <p class="label">Tarde</p>
+              <p class="label">Clima — tarde</p>
               <input type="hidden" name="climaTarde" />
               <div class="chips chips--weather" data-field="climaTarde"></div>
               <p class="condition" id="condicao" hidden></p>
 
               <div class="duo">
                 <label class="field">
-                  <span class="label">Entrada</span>
+                  <span class="label">Expediente — entrada</span>
                   <input class="input" type="time" name="horaInicio" />
                 </label>
                 <label class="field">
-                  <span class="label">Saída</span>
+                  <span class="label">Expediente — saída</span>
                   <input class="input" type="time" name="horaFim" />
                 </label>
-              </div>
-
-              <div class="duo">
-                <label class="field">
-                  <span class="label">Início da obra</span>
-                  <input class="input" type="date" name="inicio" />
-                </label>
-                <label class="field">
-                  <span class="label">Entrega prevista</span>
-                  <input class="input" type="date" name="entrega" />
-                </label>
-              </div>
-              <div class="deadline" id="deadline" hidden>
-                <div class="deadline__row">
-                  <span><strong id="dias-corridos">—</strong> de obra</span>
-                  <span id="dias-restantes">—</span>
-                </div>
-                <div class="deadline__bar" aria-hidden="true"><span id="prazo-bar"></span></div>
-                <p class="deadline__pct"><span id="prazo-pct">—</span> do prazo decorrido</p>
               </div>
             </div>
           </details>
@@ -3270,19 +3399,18 @@ const updateComputed = () => {
   const inicio = dayNumber(f.inicio.value);
   const entrega = dayNumber(f.entrega.value);
 
-  $('dia-semana').textContent = weekday(f.data.value) || '—';
+  $('dia-semana').textContent = f.data.value ? `${brDate(f.data.value)} · ${weekday(f.data.value)}` : '—';
 
   // Prazo
   const corridos = data !== null && inicio !== null ? data - inicio : null;
   const restantes = data !== null && entrega !== null ? entrega - data : null;
   const total = inicio !== null && entrega !== null ? entrega - inicio : null;
-  $('deadline').hidden = corridos === null && restantes === null;
   $('dias-corridos').textContent = corridos === null ? '—' : plural(corridos, 'dia');
   const late = restantes !== null && restantes < 0;
   const rest = $('dias-restantes');
   rest.classList.toggle('is-late', late);
   rest.textContent =
-    restantes === null ? '' : late ? `${plural(-restantes, 'dia')} de atraso` : `faltam ${plural(restantes, 'dia')}`;
+    restantes === null ? '—' : late ? `${plural(-restantes, 'dia')} de atraso` : plural(restantes, 'dia');
   const pct = corridos !== null && total > 0 ? Math.round((corridos / total) * 100) : null;
   $('prazo-pct').textContent = pct === null ? '—' : `${pct}%`;
   $('prazo-bar').style.width = `${Math.max(0, Math.min(100, pct ?? 0))}%`;
@@ -3483,16 +3611,18 @@ const renderPrintDoc = () => {
   else if (climas.includes('Chuva')) note = '<p class="pd-note pd-note--warn">Houve chuva: a produção pode ter sido afetada.</p>';
 
   const cell = (k, v, extra = '') => `<div class="pd-cell"><span class="pd-k">${k}</span><span class="pd-v ${extra}">${v}</span></div>`;
+  const bar = pct !== null ? `<div class="pd-bar ${late || pct > 100 ? 'is-late' : ''}"><span style="width:${Math.max(0, Math.min(100, pct))}%"></span></div>` : '';
   const grid = `<div class="pd-grid">
+    ${cell('Data do relatório', `${esc(brDate(f.data)) || '—'}${f.data ? ` <small style="font-weight:600;color:#5b6676;text-transform:capitalize">${esc(weekday(f.data))}</small>` : ''}`)}
+    ${cell('Início da obra', esc(brDate(f.inicio)) || '—')}
+    ${cell('Prazo previsto de entrega', esc(brDate(f.entrega)) || '—')}
+    ${cell('Dias corridos', corridos === null ? '—' : plural(corridos, 'dia'))}
+    ${cell('Dias para a entrega', restantes === null ? '—' : late ? `${plural(-restantes, 'dia')} de atraso` : plural(restantes, 'dia'), late ? 'is-late' : '')}
+    ${cell('Prazo decorrido', `${pct === null ? '—' : `${pct}%`}`).replace('</span></div>', `</span>${bar}</div>`)}
     ${cell('Clima — manhã', weatherHtml(f.climaManha))}
     ${cell('Clima — tarde', weatherHtml(f.climaTarde))}
     ${cell('Expediente', f.horaInicio || f.horaFim ? `${esc(f.horaInicio || '—')} às ${esc(f.horaFim || '—')}` : '—')}
-    ${cell('Efetivo total', `${efetivoTotal()} pessoas`)}
-    ${cell('Início da obra', esc(brDate(f.inicio)) || '—')}
-    ${cell('Entrega prevista', esc(brDate(f.entrega)) || '—')}
-    ${cell('Dias corridos', corridos === null ? '—' : plural(corridos, 'dia'))}
-    ${cell(late ? 'Atraso' : 'Prazo restante', restantes === null ? '—' : `${plural(Math.abs(restantes), 'dia')}${pct !== null ? ` · ${pct}%` : ''}${pct !== null ? `` : ''}`, late ? 'is-late' : '')}
-  </div>${pct !== null ? `<div class="pd-bar ${late || pct > 100 ? 'is-late' : ''}" style="margin-top:1.5mm"><span style="width:${Math.max(0, Math.min(100, pct))}%"></span></div>` : ''}${note}`;
+  </div>${note}`;
 
   // Efetivo
   const equipe = filledRows('equipe');
@@ -3530,7 +3660,7 @@ const renderPrintDoc = () => {
     : '<p class="pd-empty">Nenhuma atividade registrada.</p>';
 
   const parts = [];
-  parts.push(sec('Condições do dia e prazo', grid));
+  parts.push(sec('Data e clima', grid));
   parts.push(sec('Efetivo', efetivoBody, `${efetivoTotal()} pessoas`));
   parts.push(sec('Atividades do dia', ativBody, ativ.length ? plural(ativ.length, 'atividade') : ''));
 
@@ -3654,7 +3784,7 @@ const buildSummary = () => {
   if (f.climaManha || f.climaTarde) lines.push(`Clima: manhã ${f.climaManha || '—'} · tarde ${f.climaTarde || '—'}`);
   if (f.horaInicio || f.horaFim) lines.push(`Expediente: ${f.horaInicio || '—'} às ${f.horaFim || '—'}`);
   const rest = $('dias-restantes').textContent;
-  if (rest) lines.push(`Prazo: ${rest} (${$('prazo-pct').textContent} decorrido)`);
+  if (rest !== '—') lines.push(`Dias corridos: ${$('dias-corridos').textContent} · Dias para a entrega: ${rest} · Prazo decorrido: ${$('prazo-pct').textContent}`);
   lines.push(`Efetivo total: ${efetivoTotal()}`);
 
   const section = (title, key, format) => {
